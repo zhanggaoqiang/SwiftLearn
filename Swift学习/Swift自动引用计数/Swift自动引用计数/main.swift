@@ -173,6 +173,75 @@ list = nil
 
 //无主引用实例
 
+class Student {
+    var name :String = ""
+    var section:Marks?
+    init(name:String){
+        self.name = name
+    }
+    deinit {
+        print("\name")
+    }
+    
+    
+}
+
+
+class Marks {
+    var marks:Int = 0
+    unowned let stname:Student
+    init(marks:Int,stname:Student) {
+        self.marks = marks
+        self.stname = stname
+    }
+    deinit{
+        print("学生的分数为 \(marks)")
+    }
+    
+}
+
+var module: Student?
+module = Student(name: "ARC")
+module!.section = Marks(marks: 98, stname: module!)
+module = nil
+
+
+//闭包引起的循环引用
+/*
+ 循环引用还会发生在当你将一个闭包赋值给类实例的某个属性，并且这个闭包体中又使用了实例。这个闭包中可能访问了某个属性
+ 例如。self..someproperty,或者闭包中调用了实例的某个方法，例如self.someMethod.这两种情况都导致了闭包捕获self,
+ 从而产生了循环强引用
+*/
+//实例，下面的实例展示了当一个闭包是如何产生一个循环强引用的，例子定义了一个脚HTMLlement的类，用一种简单的模型表示HTML中的
+//一个单独的元素
+
+class HTMLElement {
+    
+    let name: String
+    let text: String?
+    
+    lazy var asHTML: () -> String = {
+        if let text = self.text {
+            return "<\(self.name)>\(text)</\(self.name)>"
+        } else {
+            return "<\(self.name) />"
+        }
+    }
+    
+    init(name: String, text: String? = nil) {
+        self.name = name
+        self.text = text
+    }
+    
+    deinit {
+        print("\(name) is being deinitialized")
+    }
+    
+}
+
+// 创建实例并打印信息
+var paragraph: HTMLElement? = HTMLElement(name: "p", text: "hello, world")
+print(paragraph!.asHTML())
 
 
 
@@ -182,12 +251,52 @@ list = nil
 
 
 
+//弱引用和无主引用
+/*
+ 当闭包和捕获的实例总是互相引用并且总是同时销毁时，将闭包的捕获定义为无主引用
+ 相反的，当捕获的引用有时可能会为nil时、将闭包的捕获定义为弱引用
+ 如果捕获的引用绝对不会置为nil,应该是无主引用，而不是弱引用
+ 
+ 
+ 
+ */
 
 
+//实例
 
+//前面的HTMLElement例子中，无主引用是正确的解决循环强引用的方法。这样编写HTMLElement类来避免循环强引用：
 
+class HTMLElement1 {
+    
+    let name: String
+    let text: String?
+    
+    lazy var asHTML: () -> String = {
+        [unowned self] in
+        if let text = self.text {
+            return "<\(self.name)>\(text)</\(self.name)>"
+        } else {
+            return "<\(self.name) />"
+        }
+    }
+    
+    init(name: String, text: String? = nil) {
+        self.name = name
+        self.text = text
+    }
+    
+    deinit {
+        print("\(name) 被析构")
+    }
+    
+}
 
+//创建并打印HTMLElement实例
+var paragraph1: HTMLElement1? = HTMLElement1(name: "p", text: "hello, world")
+print(paragraph1!.asHTML())
 
+// HTMLElement实例将会被销毁，并能看到它的析构函数打印出的消息
+paragraph1 = nil
 
 
 
