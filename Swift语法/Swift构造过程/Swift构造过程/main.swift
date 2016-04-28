@@ -17,7 +17,6 @@ import Foundation
 
 //以下结构体定义一个不带参数的构造器init,并在里面将存储性属性length和breadth的值初始化为6和12
 
-
 struct rectangle {
     var length:Double=0;
     var breadth:Double = 0
@@ -330,6 +329,21 @@ print("五角型：\(subClass.description)")
  接下来的例子将在操作中展示指定构造器，便利构造器和自动构造器的继承
  它定义了包含两个类MainClass,SubClass的类层次结构，并将演示它们的构造器是如何相互作用的
 */
+
+
+/*
+ 构造器链:
+ 为了简化指定构造器和便利构造器之间的调用关系,Swift采用以下三条规则来限制构造器之间的代理调用：
+ 规则1：指定构造器必须调用其直接父类的指定构造器
+ 规则2：便利构造器必须调用同一类中定义的其它构造器
+ 规则3：便利构造器必须最终以调用一个指定构造器结束
+ 一个更方便记忆的方法是：
+ 指定构造器必须总是向上代理
+ 便利构造器必须总是横向代理
+ 
+ 
+ */
+
 
 class MainClass {
     var name:String
