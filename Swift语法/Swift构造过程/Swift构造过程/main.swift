@@ -285,6 +285,92 @@ print("矩形的面积:\(area6.length)")
 
 
 
+//构造器的继承和重载：
+/*
+ 
+ Swift中子类不会默认继承父类的构造器
+ 父类的构造器仅在确定和安全的情况下被继承
+ 当你重写一个父类指定构造器时，你需要写override修饰符
+*/
+
+class SuperClass{
+
+    var corners  = 4
+    var description :String {
+        return "\(corners) 边"
+        
+    }
+    
+}
+let rectangle8 = SuperClass()
+print("矩形:\(rectangle8.description)")
+
+
+
+class SubClass: SuperClass {
+    override init() {
+        super.init()
+        corners = 5
+    }
+}
+
+let subClass = SubClass()
+print("五角型：\(subClass.description)")
+
+
+
+
+
+
+
+
+
+//指定构造器和便利构造器实例：
+/*
+ 接下来的例子将在操作中展示指定构造器，便利构造器和自动构造器的继承
+ 它定义了包含两个类MainClass,SubClass的类层次结构，并将演示它们的构造器是如何相互作用的
+*/
+
+class MainClass {
+    var name:String
+    init(name:String){
+        self.name = name
+    }
+    
+    convenience init() {
+        self.init(name:"[匿名]")
+    }
+    
+}
+
+
+let  main = MainClass(name:"Runoob")
+print("MainClass 名字为: \(main.name)")
+
+let main2 = MainClass()
+print("没有对应名字:\(main2.name)")
+
+class SubClass8: MainClass {
+    var count:Int
+    
+    init(name:String,count:Int){
+        self.count = count
+        super.init(name: name)
+    }
+    
+    
+    override convenience init(name: String) {
+        self.init(name:name,count: 1)
+        
+    }
+    
+}
+
+let sub8 = SubClass8(name:"Runoob")
+print("MainClass 名字为:\(sub8.name)")
+
+let sub9 = SubClass8(name:"Runoob",count:3)
+print("count 变量: \(sub9.count)")
 
 
 
